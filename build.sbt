@@ -66,11 +66,9 @@ lazy val settings =
   scalafmtSettings++
   assemblySettings
 
-scalaVersion := "2.11.11"
-
 lazy val commonSettings =
   Seq(
-//    scalaVersion := "2.11.11",
+    scalaVersion := "2.11.11",
     organization := "default",
     organizationName := "com.ansrivas",
     startYear := Some(currentYear),
