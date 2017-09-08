@@ -19,7 +19,24 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-object Main {
-  def main(args: Array[String]): Unit =
-    println("Hello world")
+package com.ansrivas
+
+import com.typesafe.config._
+
+/**
+  * Environment reads the SCALA_ENV variable in order to
+  * read the correct configuration from the configuration file.
+  *
+  */
+object Environment {
+
+  // Variable representing the machine where code is being executed
+  private val ENV = "SCALA_ENV"
+
+  val env = Option[String](System.getenv(ENV)).getOrElse("local").toLowerCase()
+
+  private val config = ConfigFactory.load()
+
+  // Read the default configuration from config file: application.conf
+  def apply() = config.getConfig(env)
 }
