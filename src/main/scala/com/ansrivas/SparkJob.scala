@@ -23,26 +23,25 @@ package com.ansrivas
 
 import java.io.File
 
+import com.ansrivas.utils.Utils
 import com.recogizer.tsspark.utils.Logging
 
 class SparkJob extends Serializable with Logging {
-  val sparkSession = Context.sparkSession
 
   def runJob(files: List[File]): Unit = {
 
-    // Read here the users file first and generate some basic results for them.
-    // Some map which gives you file path from a key
+    //TODO: Better to create a broadcast variable here, if it needs to be on HDFS
 
-    val paths = Map(
-      "users" -> "/mnt/4CECFA4BECFA2F38/Dropbox/local-workspace/ankur-projects/personal/yelp_dataset/dataset/user.json"
-    )
-    val usersDF = sparkSession.read.format("json").load(paths.get("users").get)
+    val usersJson: String = Utils.getJsonPath(files, "user.json").get
+
+    logger.info("Now processing with %s".format(usersJson))
+    val usersDF = Context.sparkSession.read.format("json").load(usersJson)
     usersDF.cache()
 
     usersDF.createOrReplaceTempView("users")
 
     val oldest10Yelpers = """SELECT user_id FROM users order by (yelping_since) limit 10"""
-    sparkSession.sql(oldest10Yelpers).show(12, truncate = false)
+    Context.sparkSession.sql(oldest10Yelpers).show(12, truncate = false)
 
   }
 }

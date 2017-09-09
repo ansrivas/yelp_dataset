@@ -8,7 +8,7 @@ resolvers +=  "Typesafe" at "http://repo.typesafe.com/typesafe/releases/"
 lazy val yelp =
   project
     .in(file("."))
-    .enablePlugins(AutomateHeaderPlugin, GitVersioning)
+    .enablePlugins(AutomateHeaderPlugin)
     .enablePlugins( JavaAppPackaging)
     .settings(settings)
     .settings(
@@ -62,7 +62,6 @@ lazy val library =
 
 lazy val settings =
   commonSettings ++
-  gitSettings ++
   scalafmtSettings++
   assemblySettings
 
@@ -88,10 +87,6 @@ lazy val commonSettings =
     }
 )
 
-lazy val gitSettings =
-  Seq(
-    git.useGitDescribe := true
-  )
 
 lazy val scalafmtSettings =
   Seq(
@@ -104,8 +99,8 @@ lazy val assemblySettings =
   Seq(
     assemblyJarName in assembly := "main.jar",
     mainClass in (Compile, packageBin) := Some("com.ansrivas.Main"),
-    mainClass in assembly := Some("com.ansrivas.Main"),
-    assemblyOutputPath in assembly := file( "./dist/" + (assemblyJarName in assembly).value )
+//    mainClass in assembly := Some("com.ansrivas.Main"),
+    assemblyOutputPath in assembly := file( "dist/" + (assemblyJarName in assembly).value )
   )
 
 assemblyMergeStrategy in assembly := {
@@ -117,4 +112,3 @@ assemblyMergeStrategy in assembly := {
   case "reference.conf" => MergeStrategy.concat
   case _                => MergeStrategy.first
 }
-
