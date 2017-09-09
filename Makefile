@@ -8,12 +8,15 @@ help:          ## Show available options with this Makefile
 clean:         ## Clean removes any previous directories named "dataset" in present working directory
 clean:
 	@echo "Removing the directory dataset if its present in current working directory"
-	@rm -rf ./dataset
+	@rm -rf ./dataset && \
+	docker rm -f test-run-c ; \
+	docker rmi -f ansrivas/yelp_dataset:latest
+
 
 untar:         ## Untar the input .tar file to a predefined location
-untar:	clean
+untar:
 ifeq ($(strip $(FILEPATH)),)
-	$(error FILEPATH is undefined. Usage: make untar/run FILEPATH=your_file.tar)
+	$(error FILEPATH is undefined. Usage: make untar/run_local/run_docker FILEPATH=your_file.tar)
 endif
 	@echo "Now extracting the files from given tar" && \
 	mkdir -p ${EXTRACT_DIR} && \
@@ -23,6 +26,11 @@ assembly:      ## Create an assembly (fat jar) from the scala project
 assembly:
 	sbt clean compile assembly
 
-run:           ## Run the fat jar after compilation and assembly
-run:	untar assembly
+run_local:     ## Run the fat jar after compilation and assembly LOCALLY
+run_local:	untar assembly
 	java -jar ./dist/main.jar ${EXTRACT_DIR}
+
+run_docker:    ## Run the fat jar after compilation and assembly via docker
+run_docker:	untar
+	docker build -t ansrivas/yelp_dataset:latest . && \
+	docker run -it  --name=test-run-c -v `pwd`/dataset:/root/dataset  ansrivas/yelp_dataset:latest
