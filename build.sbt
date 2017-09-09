@@ -102,9 +102,9 @@ lazy val scalafmtSettings =
 
 lazy val assemblySettings =
   Seq(
-    mainClass in assembly := Some("com.ansrivas.Main"),
     assemblyJarName in assembly := "main.jar",
     mainClass in (Compile, packageBin) := Some("com.ansrivas.Main"),
+    mainClass in assembly := Some("com.ansrivas.Main"),
     assemblyOutputPath in assembly := file( "./dist/" + (assemblyJarName in assembly).value )
   )
 

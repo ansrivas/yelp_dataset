@@ -19,48 +19,35 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import java.io.File
+package com.ansrivas
 
-import com.ansrivas.SparkJob
-import com.ansrivas.utils.Utils
-import org.apache.log4j.{ Level, Logger }
+import org.apache.spark.sql.SparkSession
 
-object Main {
+/**
+  * Context object has bunch of configurations related to spark context
+  */
+object Context {
+  val envConfig = Environment()
 
-  private val logger = Logger.getLogger(this.getClass)
+  //================== Load the configurations here ==========================
+  val appName = envConfig.getString("spark.appName")
+  val master  = envConfig.getString("spark.master")
 
-  def main(args: Array[String]): Unit = {
-    Logger.getLogger("org").setLevel(Level.WARN)
-    Logger.getLogger("akka").setLevel(Level.WARN)
-    Logger.getLogger("com.datastax").setLevel(Level.WARN)
-    logger.setLevel(Level.DEBUG)
+  //==========================================================================
+  lazy val sparkSession =
+    SparkSession.builder
+      .master(master)
+      .appName(appName)
+      .getOrCreate()
 
-    if (args.length != 1) {
-      Utils.printUsage()
-      return
-    }
+  //===== If the output is expected to be cassandra, use these configs========
+  //      .config("spark.cassandra.connection.host", cassandraHost)
+  //      .config("spark.cassandra.auth.username",   cassandraUser)
+  //      .config("spark.cassandra.auth.password",   cassandraPass)
+  //==========================================================================
 
-    Utils.listFiles(args(0)) match {
-      case Some(x) => {
-        x.foreach(println)
-        // run()
-      }
-      case None => {
-        System.err.println("No json files found")
-        return
-      }
-    }
-
-  }
-
-  def run(files: List[File]): Unit =
-    try {
-      val sparkJob = new SparkJob()
-      sparkJob.runJob(files)
-
-    } catch {
-      case ex: Exception =>
-        logger.error(ex.getMessage)
-        logger.error(ex.getStackTrace.toString)
-    }
+  /**
+    * stopSparkSession stops the underlying spark session
+    */
+  def stopSparkSession() = sparkSession.stop()
 }

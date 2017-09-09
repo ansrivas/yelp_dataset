@@ -19,48 +19,21 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import java.io.File
+package com.ansrivas.utils
 
-import com.ansrivas.SparkJob
-import com.ansrivas.utils.Utils
-import org.apache.log4j.{ Level, Logger }
+import org.scalatest.{ Matchers, WordSpec }
 
-object Main {
+class UtilsSuite extends WordSpec with Matchers {
 
-  private val logger = Logger.getLogger(this.getClass)
+  "listFiles with json filter" must {
+    "return abc and bcd.json files" in {
 
-  def main(args: Array[String]): Unit = {
-    Logger.getLogger("org").setLevel(Level.WARN)
-    Logger.getLogger("akka").setLevel(Level.WARN)
-    Logger.getLogger("com.datastax").setLevel(Level.WARN)
-    logger.setLevel(Level.DEBUG)
+      val dirPath = getClass.getResource("/testData").getPath
 
-    if (args.length != 1) {
-      Utils.printUsage()
-      return
+      val filesList = Utils.listFiles(dirPath)
+      assert(filesList.isDefined)
+      assert(filesList.get.length == 2)
+      assert(filesList.get.map(x => x.getName) == List("abc.json", "bcd.json"))
     }
-
-    Utils.listFiles(args(0)) match {
-      case Some(x) => {
-        x.foreach(println)
-        // run()
-      }
-      case None => {
-        System.err.println("No json files found")
-        return
-      }
-    }
-
   }
-
-  def run(files: List[File]): Unit =
-    try {
-      val sparkJob = new SparkJob()
-      sparkJob.runJob(files)
-
-    } catch {
-      case ex: Exception =>
-        logger.error(ex.getMessage)
-        logger.error(ex.getStackTrace.toString)
-    }
 }
