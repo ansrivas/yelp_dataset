@@ -42,8 +42,7 @@ object Main {
 
     Utils.listFiles(args(0)) match {
       case Some(x) => {
-        x.foreach(println)
-        // run()
+        run(x)
       }
       case None => {
         System.err.println("No json files found")
