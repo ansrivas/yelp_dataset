@@ -44,6 +44,7 @@ object Context {
   //      .config("spark.cassandra.connection.host", cassandraHost)
   //      .config("spark.cassandra.auth.username",   cassandraUser)
   //      .config("spark.cassandra.auth.password",   cassandraPass)
+  //==========================================================================
 
   /**
     * stopSparkSession stops the underlying spark session

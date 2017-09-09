@@ -19,48 +19,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package com.ansrivas
+
 import java.io.File
 
-import com.ansrivas.SparkJob
-import com.ansrivas.utils.Utils
-import org.apache.log4j.{ Level, Logger }
+import com.recogizer.tsspark.utils.Logging
 
-object Main {
+class SparkJob extends Serializable with Logging {
+  val sparkSession = Context.sparkSession
 
-  private val logger = Logger.getLogger(this.getClass)
+  def runJob(files: List[File]): Unit = {
 
-  def main(args: Array[String]): Unit = {
-    Logger.getLogger("org").setLevel(Level.WARN)
-    Logger.getLogger("akka").setLevel(Level.WARN)
-    Logger.getLogger("com.datastax").setLevel(Level.WARN)
-    logger.setLevel(Level.DEBUG)
+    // Read here the users file first and generate some basic results for them.
+    // Some map which gives you file path from a key
 
-    if (args.length != 1) {
-      Utils.printUsage()
-      return
-    }
+    val paths = Map(
+      "users" -> "/mnt/4CECFA4BECFA2F38/Dropbox/local-workspace/ankur-projects/personal/yelp_dataset/dataset/user.json"
+    )
+    val usersDF = sparkSession.read.format("json").load(paths.get("users").get)
+    usersDF.cache()
 
-    Utils.listFiles(args(0)) match {
-      case Some(x) => {
-        x.foreach(println)
-        // run()
-      }
-      case None => {
-        System.err.println("No json files found")
-        return
-      }
-    }
+    usersDF.createOrReplaceTempView("users")
+
+    val oldest10Yelpers = """SELECT user_id FROM users order by (yelping_since) limit 10"""
+    sparkSession.sql(oldest10Yelpers).show(12, truncate = false)
 
   }
-
-  def run(files: List[File]): Unit =
-    try {
-      val sparkJob = new SparkJob()
-      sparkJob.runJob(files)
-
-    } catch {
-      case ex: Exception =>
-        logger.error(ex.getMessage)
-        logger.error(ex.getStackTrace.toString)
-    }
 }

@@ -19,21 +19,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.ansrivas
+package com.recogizer.tsspark.utils
 
-import org.scalatest.{ Matchers, WordSpec }
+import org.apache.log4j.Logger
 
-class UtilsSuite extends WordSpec with Matchers {
-
-  "listFiles with json filter" must {
-    "return abc and bcd.json files" in {
-
-      val dirPath = getClass.getResource("/testData").getPath
-
-      val filesList = Utils.listFiles(dirPath)
-      assert(filesList.isDefined)
-      assert(filesList.get.length == 2)
-      assert(filesList.get.map(x => x.getName) == List("abc.json", "bcd.json"))
-    }
-  }
+trait Logging extends Serializable {
+  @transient lazy val logger =
+    Logger.getLogger(this.getClass.getName.stripSuffix("$"))
 }
