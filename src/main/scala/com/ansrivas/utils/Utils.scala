@@ -23,6 +23,8 @@ package com.ansrivas.utils
 
 import java.io.File
 
+import scala.util.Try
+
 /**
   * Set of generic utility functions shared across the project
   */
@@ -65,4 +67,24 @@ object Utils {
       None
     }
   }
+
+  /**
+    * getJsonPath returns the path of a file from a directory given a filter string
+    * @param files
+    * @param filter
+    * @return
+    *
+    * For eg. if a directory has contents like "/mydir/dir/abc.json", "/mydir/dir/bdc.json"
+    * and filter string  = "bdc.json" then return value should be "/mydir/dir/bdc.json"    *
+    */
+  def getJsonPath(files: List[File], filter: String): Try[String] =
+    // TODO: Super inefficient, change this querying to a map rather.
+    Try(
+      files
+        .filter { f =>
+          f.getAbsolutePath().endsWith(filter)
+        }
+        .head
+        .getAbsolutePath
+    )
 }

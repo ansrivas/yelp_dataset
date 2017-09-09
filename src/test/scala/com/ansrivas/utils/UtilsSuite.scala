@@ -25,15 +25,27 @@ import org.scalatest.{ Matchers, WordSpec }
 
 class UtilsSuite extends WordSpec with Matchers {
 
+  val dirPath   = getClass.getResource("/testData").getPath
+  val filesList = Utils.listFiles(dirPath)
   "listFiles with json filter" must {
     "return abc and bcd.json files" in {
 
-      val dirPath = getClass.getResource("/testData").getPath
-
-      val filesList = Utils.listFiles(dirPath)
       assert(filesList.isDefined)
       assert(filesList.get.length == 2)
       assert(filesList.get.map(x => x.getName) == List("abc.json", "bcd.json"))
+    }
+  }
+
+  "getJsonPath with filename filter" must {
+    "return correct filename" in {
+
+      val actualFile = Utils.getJsonPath(filesList.get, "bcd.json")
+      assert(actualFile.isSuccess)
+      assert(actualFile.get.contains("bcd.json"))
+
+      val actualFile2 = Utils.getJsonPath(filesList.get, "abc.json")
+      assert(actualFile2.isSuccess)
+      assert(actualFile2.get.contains("abc.json"))
     }
   }
 }
