@@ -33,6 +33,7 @@ object Main {
     Logger.getLogger("org").setLevel(Level.WARN)
     Logger.getLogger("akka").setLevel(Level.WARN)
     Logger.getLogger("com.datastax").setLevel(Level.WARN)
+    Logger.getLogger("com.ansrivas").setLevel(Level.DEBUG)
     logger.setLevel(Level.DEBUG)
 
     if (args.length != 1) {

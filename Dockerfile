@@ -6,4 +6,4 @@ COPY . /root
 # Create a fat jar
 RUN sbt clean compile assembly
 
-CMD java -jar /root/dist/main.jar /root/dataset
+CMD java -Dlog4j.configuration=file:"/root/src/main/resources/log4j.properties" -jar /root/dist/main.jar /root/dataset
