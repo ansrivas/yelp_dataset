@@ -27,7 +27,6 @@ import com.ansrivas.utils.Utils
 import com.recogizer.tsspark.utils.Logging
 
 class SparkJob extends Serializable with Logging {
-
   def runJob(files: List[File]): Unit = {
 
     //TODO: Better to create a broadcast variable here, if it needs to be on HDFS
