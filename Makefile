@@ -11,7 +11,6 @@ clean:
 	@rm -rf ./dataset && \
 	docker rmi -f ansrivas/yelp_dataset:latest
 
-
 untar:         ## Untar the input .tar file to a predefined location
 untar:
 ifeq ($(strip $(FILEPATH)),)

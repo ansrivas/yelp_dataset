@@ -1,7 +1,19 @@
 language: scala
 
 scala:
-  - 2.12.3
+  - 2.11.11
 
 jdk:
   - oraclejdk8
+
+script: make assembly
+
+branches:
+  only:
+    - master
+
+cache:
+  directories:
+    - $HOME/.coursier
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt
