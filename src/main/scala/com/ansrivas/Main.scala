@@ -21,7 +21,7 @@
 
 import java.io.File
 
-import com.ansrivas.SparkJob
+import com.ansrivas.{ Context, SparkJob }
 import com.ansrivas.utils.Utils
 import org.apache.log4j.{ Level, Logger }
 
@@ -63,12 +63,14 @@ object Main {
     */
   def run(files: List[File]): Unit =
     try {
-      val sparkJob = new SparkJob()
+      val sparkJob = new SparkJob(Context.sparkSession)
       sparkJob.runJob(files)
+      Context.sparkSession.stop()
 
     } catch {
       case ex: Exception =>
         logger.error(ex.getMessage)
         logger.error(ex.getStackTrace.toString)
     }
+
 }
