@@ -29,6 +29,10 @@ object Main {
 
   private val logger = Logger.getLogger(this.getClass)
 
+  /**
+    * main defines the entry point for the current program
+    * @param args
+    */
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.WARN)
     Logger.getLogger("akka").setLevel(Level.WARN)
@@ -53,6 +57,10 @@ object Main {
 
   }
 
+  /**
+    * run executes the spark job wrapped in SparkJob class
+    * @param files
+    */
   def run(files: List[File]): Unit =
     try {
       val sparkJob = new SparkJob()

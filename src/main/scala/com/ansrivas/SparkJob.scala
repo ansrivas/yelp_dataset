@@ -28,6 +28,21 @@ import com.recogizer.tsspark.utils.Logging
 import org.apache.spark.sql.functions._
 
 class SparkJob extends Serializable with Logging {
+
+  /**
+    *
+    * @param msg
+    */
+  def printHeader(msg: String) = {
+    logger.info("=" * msg.length)
+    logger.info(msg)
+    logger.info("=" * msg.length)
+  }
+
+  /**
+    *
+    * @param files
+    */
   def runJob(files: List[File]): Unit = {
     import Context.sparkSession.sqlContext.implicits._
     //TODO: Better to create a broadcast variable here, if it needs to be on HDFS
@@ -42,24 +57,26 @@ class SparkJob extends Serializable with Logging {
 
     usersDF.createOrReplaceTempView("users")
 
+    //==============================================================================
     val oldest10Yelpers =
       """SELECT user_id, yelping_since
         | FROM users
         | ORDER BY (yelping_since) ASC
         | LIMIT 10""".stripMargin
-    logger.info("====== Now showing top 10 oldest registered yelpers ========")
-
+    printHeader("Now showing top 10 oldest registered yelpers")
     Context.sparkSession.sql(oldest10Yelpers).show(12, truncate = false)
+    //==============================================================================
 
+    //==============================================================================
     val topYelpersWithMaxFriends = usersDF
       .select($"user_id", explode($"friends").as("friends_array"))
       .groupBy($"user_id")
       .count()
 
-    logger.info("======= Now showing top 10 yelpers with maximum number of friends =====")
+    printHeader("Now showing top 10 yelpers with maximum number of friends")
     topYelpersWithMaxFriends.show(10, truncate = false)
+    //==============================================================================
 
-    //========================== Let's load business json here ======================
     logger.info("Now processing with %s".format(businessJson))
     val businessDF = Context.sparkSession.read.format("json").load(businessJson)
     businessDF.printSchema()
@@ -68,15 +85,26 @@ class SparkJob extends Serializable with Logging {
     businessDF.createOrReplaceTempView("business")
     businessDF.show(10)
 
-    // Get the list of cities which have the maximum number of business open
+    //==============================================================================
+    printHeader("List of cities which have the maximum number of business open")
     val citiesWithMaximumBusinessOpen =
       """SELECT count(city), city
         | FROM business WHERE is_open = '1'
         | GROUP BY city
         | ORDER BY count(city) DESC
         | LIMIT 10""".stripMargin
+    Context.sparkSession.sql(citiesWithMaximumBusinessOpen).show(10, truncate = false)
+    //==============================================================================
 
-    Context.sparkSession.sql(citiesWithMaximumBusinessOpen).show(12, truncate = false)
+    //==============================================================================
+    printHeader("Businesses with high review count and ordered by number of stars")
+    businessDF
+      .select($"business_id", $"is_open", $"stars", $"review_count")
+      .filter($"is_open" === "1")
+      .orderBy(desc("review_count"), desc("stars"))
+      .limit(10)
+      .show(10, truncate = false)
+    //==============================================================================
 
     usersDF.unpersist()
     businessDF.unpersist()
