@@ -27,7 +27,7 @@ assembly:
 
 run_local:     ## Run the fat jar after compilation and assembly LOCALLY
 run_local:	untar assembly
-	java -Dlog4j.configuration=file:"src/main/resources/log4j.properties" -jar ./dist/main.jar ${EXTRACT_DIR}
+	java -jar ./dist/main.jar ${EXTRACT_DIR}
 
 run_docker:    ## Run the fat jar after compilation and assembly via docker
 run_docker:	untar

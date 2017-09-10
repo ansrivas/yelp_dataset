@@ -106,7 +106,8 @@ lazy val assemblySettings =
 assemblyMergeStrategy in assembly := {
   case m if m.toLowerCase.endsWith("manifest.mf")     => MergeStrategy.discard
   case m if m.toLowerCase.matches("meta-inf.*\\.sf$") => MergeStrategy.discard
-  case "log4j.properties"                             => MergeStrategy.discard
+  // Incase log4j.properties creates an issue during assembly then uncomment this line
+  // case "log4j.properties"                             => MergeStrategy.discard
   case m if m.toLowerCase.startsWith("meta-inf/services/") =>
     MergeStrategy.filterDistinctLines
   case "reference.conf" => MergeStrategy.concat
