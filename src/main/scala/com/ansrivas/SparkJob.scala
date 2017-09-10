@@ -116,14 +116,6 @@ class SparkJob(sparkSession: SparkSession) extends Serializable with Logging {
     usersDF.cache()
     usersDF.createOrReplaceTempView("users")
 
-    val reviewsDF = loadDFAndPrintStats(reviewJson)
-    reviewsDF.cache()
-    reviewsDF.createOrReplaceTempView("reviews")
-
-    val businessDF = loadDFAndPrintStats(businessJson)
-    businessDF.cache()
-    businessDF.createOrReplaceTempView("business")
-
     //==============================================================================
     printHeader("Now showing top 10 oldest registered yelpers")
     val oldest10YelpersSQL =
@@ -140,6 +132,12 @@ class SparkJob(sparkSession: SparkSession) extends Serializable with Logging {
     getTopYelpersWithMaxNumberOfFriends(usersDF).show(10, truncate = false)
     //==============================================================================
 
+    // Cleanup users DF here.
+    usersDF.unpersist()
+
+    val businessDF = loadDFAndPrintStats(businessJson)
+    businessDF.cache()
+    businessDF.createOrReplaceTempView("business")
     //==============================================================================
     printHeader("List of cities which have the maximum number of business open")
     val citiesWithMaximumBusinessOpenSQL =
@@ -156,14 +154,17 @@ class SparkJob(sparkSession: SparkSession) extends Serializable with Logging {
     getTop10BusinessesWithReviewCountsAndStars(businessDF).show(10, truncate = false)
     //==============================================================================
 
+    val reviewsDF = loadDFAndPrintStats(reviewJson)
+    // reviewsDF.cache()
+    reviewsDF.createOrReplaceTempView("reviews")
+
     //==============================================================================
     printHeader("Top 10 users interested in Health & Medicare reviews")
     getTop10UsersInterestedInHealth(businessDF, reviewsDF).show(truncate = false)
     //==============================================================================
 
     // Clean all the DF manually, can be done above if not needed.
-    reviewsDF.unpersist()
-    usersDF.unpersist()
+    // reviewsDF.unpersist()
     businessDF.unpersist()
 
   }
