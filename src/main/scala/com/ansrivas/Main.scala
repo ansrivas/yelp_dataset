@@ -21,7 +21,7 @@
 
 import java.io.File
 
-import com.ansrivas.SparkJob
+import com.ansrivas.{ Context, SparkJob }
 import com.ansrivas.utils.Utils
 import org.apache.log4j.{ Level, Logger }
 
@@ -29,6 +29,10 @@ object Main {
 
   private val logger = Logger.getLogger(this.getClass)
 
+  /**
+    * main defines the entry point for the current program
+    * @param args
+    */
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.WARN)
     Logger.getLogger("akka").setLevel(Level.WARN)
@@ -53,14 +57,20 @@ object Main {
 
   }
 
+  /**
+    * run executes the spark job wrapped in SparkJob class
+    * @param files
+    */
   def run(files: List[File]): Unit =
     try {
-      val sparkJob = new SparkJob()
+      val sparkJob = new SparkJob(Context.sparkSession)
       sparkJob.runJob(files)
+      Context.sparkSession.stop()
 
     } catch {
       case ex: Exception =>
         logger.error(ex.getMessage)
         logger.error(ex.getStackTrace.toString)
     }
+
 }

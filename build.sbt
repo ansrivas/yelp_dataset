@@ -18,10 +18,8 @@ lazy val yelp =
         library.sparkTestingBase % Test,
         library.sparkCore,
         library.sparkSql,
-        library.cassandraSpark,
-        library.cassandraJava,
-        library.typesafeConfig,
-        library.commonsCompress
+        library.sparkHive,
+        library.typesafeConfig
       )
     )
 
@@ -45,16 +43,10 @@ lazy val library =
     val scalaTest  = "org.scalatest"  %% "scalatest"  % Version.scalaTest
     val sparkCore = "org.apache.spark" %% "spark-core" % Version.sparkV
     val sparkSql = "org.apache.spark" %% "spark-sql" % Version.sparkV
-    val cassandraSpark = "com.datastax.spark" %% "spark-cassandra-connector" % Version.cassandraSparkV
+    val sparkHive= "org.apache.spark" %% "spark-hive" % Version.sparkV
     val sparkTestingBase = "com.holdenkarau" %% "spark-testing-base" % Version.sparkTestingBaseV
-    val cassandraJava = "com.datastax.cassandra" % "cassandra-driver-core" % Version.cassandraJavaV
     val typesafeConfig = "com.typesafe" % "config" % Version.typesafeConfigV
-
-
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
-    val commonsCompress = "org.apache.commons" % "commons-compress" % Version.commonsCompressV
-
-  }
+   }
 
 // *****************************************************************************
 // Settings
@@ -84,7 +76,10 @@ lazy val commonSettings =
     shellPrompt in ThisBuild := { state =>
       val project = Project.extract(state).currentRef.project
       s"[$project]> "
-    }
+    },
+    parallelExecution in Test := false,
+    fork in Test := true,
+    javaOptions ++= Seq("-Xms512M", "-Xmx2048M", "-XX:MaxPermSize=2048M", "-XX:+CMSClassUnloadingEnabled")
 )
 
 
