@@ -25,22 +25,38 @@ import java.io.File
 
 import com.ansrivas.utils.Utils
 import com.recogizer.tsspark.utils.Logging
+import org.apache.spark.sql.functions._
 
 class SparkJob extends Serializable with Logging {
   def runJob(files: List[File]): Unit = {
-
+    import Context.sparkSession.sqlContext.implicits._
     //TODO: Better to create a broadcast variable here, if it needs to be on HDFS
 
     val usersJson: String = Utils.getJsonPath(files, "user.json").get
 
     logger.info("Now processing with %s".format(usersJson))
     val usersDF = Context.sparkSession.read.format("json").load(usersJson)
+    usersDF.printSchema()
     usersDF.cache()
 
     usersDF.createOrReplaceTempView("users")
 
-    val oldest10Yelpers = """SELECT user_id FROM users order by (yelping_since) limit 10"""
+    val oldest10Yelpers =
+      """SELECT user_id FROM
+        |users order by (yelping_since)
+        | limit 10""".stripMargin
+    logger.info("====== Now showing top 10 oldest registered yelpers ========")
     Context.sparkSession.sql(oldest10Yelpers).show(12, truncate = false)
+
+    val top10YelpersWithMaxFriends = usersDF
+      .select($"user_id", explode($"friends").as("friends_array"))
+      .groupBy($"user_id")
+      .count()
+
+    logger.info("======= Now showing top 10 yelpers with maximum number of friends =====")
+    top10YelpersWithMaxFriends.show(10, truncate = false)
+
+    usersDF.unpersist()
 
   }
 }
