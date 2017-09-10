@@ -1,6 +1,40 @@
 # yelp_dataset #
+---
 
-Welcome to yelp_dataset!
+Welcome to yelp dataset analysis
+
+This is a spark application which reads in the yelp dataset published in json format [json_dataset](https://www.yelp.com/dataset/download) and runs some basic sql queries on top of it.
+
+Dependencies:
+---
+
+### 1. Standalone sbt version:
+To execute this, you will need scala and sbt installed on your system.
+
+`make run_local FILEPATH=<path_to_your_json_dataset.tar>`
+
+### 2. Docker version:
+To execute docker version, only docker installation is needed on your system.
+
+`make run_docker FILEPATH=<path_to_your_json_dataset.tar>`
+> Note: This takes looooooooong to build as sbt tries to download a lot of data.
+
+
+Usage:
+----
+
+To run the application, execute `make` in the root of the project.
+
+```
+$ make
+help:           Show available options with this Makefile
+clean:          Clean removes any previous directories named "dataset" in present working directory
+untar:          Untar the input .tar file to a predefined location
+assembly:       Create an assembly (fat jar) from the scala project
+run_local:      Run the fat jar after compilation and assembly LOCALLY
+run_docker:     Run the fat jar after compilation and assembly via docker
+```
+
 
 ## Contribution policy ##
 
