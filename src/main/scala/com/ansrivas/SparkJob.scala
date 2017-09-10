@@ -25,22 +25,61 @@ import java.io.File
 
 import com.ansrivas.utils.Utils
 import com.recogizer.tsspark.utils.Logging
+import org.apache.spark.sql.functions._
 
 class SparkJob extends Serializable with Logging {
   def runJob(files: List[File]): Unit = {
-
+    import Context.sparkSession.sqlContext.implicits._
     //TODO: Better to create a broadcast variable here, if it needs to be on HDFS
 
-    val usersJson: String = Utils.getJsonPath(files, "user.json").get
+    val usersJson: String    = Utils.getJsonPath(files, "user.json").get
+    val businessJson: String = Utils.getJsonPath(files, "business.json").get
 
     logger.info("Now processing with %s".format(usersJson))
     val usersDF = Context.sparkSession.read.format("json").load(usersJson)
+    usersDF.printSchema()
     usersDF.cache()
 
     usersDF.createOrReplaceTempView("users")
 
-    val oldest10Yelpers = """SELECT user_id FROM users order by (yelping_since) limit 10"""
+    val oldest10Yelpers =
+      """SELECT user_id, yelping_since
+        | FROM users
+        | ORDER BY (yelping_since) ASC
+        | LIMIT 10""".stripMargin
+    logger.info("====== Now showing top 10 oldest registered yelpers ========")
+
     Context.sparkSession.sql(oldest10Yelpers).show(12, truncate = false)
+
+    val topYelpersWithMaxFriends = usersDF
+      .select($"user_id", explode($"friends").as("friends_array"))
+      .groupBy($"user_id")
+      .count()
+
+    logger.info("======= Now showing top 10 yelpers with maximum number of friends =====")
+    topYelpersWithMaxFriends.show(10, truncate = false)
+
+    //========================== Let's load business json here ======================
+    logger.info("Now processing with %s".format(businessJson))
+    val businessDF = Context.sparkSession.read.format("json").load(businessJson)
+    businessDF.printSchema()
+    businessDF.cache()
+
+    businessDF.createOrReplaceTempView("business")
+    businessDF.show(10)
+
+    // Get the list of cities which have the maximum number of business open
+    val citiesWithMaximumBusinessOpen =
+      """SELECT count(city), city
+        | FROM business WHERE is_open = '1'
+        | GROUP BY city
+        | ORDER BY count(city) DESC
+        | LIMIT 10""".stripMargin
+
+    Context.sparkSession.sql(citiesWithMaximumBusinessOpen).show(12, truncate = false)
+
+    usersDF.unpersist()
+    businessDF.unpersist()
 
   }
 }

@@ -2,6 +2,7 @@
 lib_managed
 project/project
 target
+dist
 
 # Worksheets (Eclipse or IntelliJ)
 *.sc
@@ -33,3 +34,6 @@ snapshots
 
 # Log files
 *.log
+
+# spark related
+spark-warehouse
