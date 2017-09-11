@@ -1,9 +1,19 @@
 from ansrivas/scala-sbt:2_11_11-1_0_1
 
 # Copy all the code in here
-COPY . /root
+COPY . /lib
 
-# Create a fat jar
-RUN sbt clean compile assembly
+RUN useradd -ms /bin/bash app && \
+    chown -R app:app /lib
 
-CMD java -jar /root/dist/main.jar /root/dataset
+USER app
+
+WORKDIR /lib
+
+# Create a fat jar and clean up rest
+RUN sbt clean compile assembly && \
+    rm -rf /lib/target && \
+    rm -rf ~/.ivy2 && \
+    rm -rf ~/.sbt
+
+CMD java -jar /lib/dist/main.jar /lib/dataset
