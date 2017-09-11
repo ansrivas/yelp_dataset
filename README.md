@@ -21,6 +21,23 @@ To execute docker version, only docker installation is needed on your system.
 `make run_docker FILEPATH=<path_to_your_json_dataset.tar>`
 > Note: This takes looooooooong to build as sbt tries to download a lot of data.
 
+### 3. Pull the image directly from docker hub *(FASTEST)*
+
+This `dataset` should be your extracted jsons directory, i.e. it should look something like this:
+
+```
+$ ls dataset/
+business.json  checkin.json  photos.json  review.json  tip.json  user.json
+```
+
+And then execute:
+
+```
+docker run -it --rm -v `pwd`/dataset:/root/dataset  ansrivas/yelp_dataset:latest
+```
+
+
+
 
 Usage:
 ----
