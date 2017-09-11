@@ -33,7 +33,7 @@ business.json  checkin.json  photos.json  review.json  tip.json  user.json
 And then execute:
 
 ```
-docker run -it --rm -v `pwd`/dataset:/root/dataset  ansrivas/yelp_dataset:latest
+docker run -it --rm -v `pwd`/dataset:/lib/dataset  ansrivas/yelp_dataset:latest
 ```
 
 
