@@ -1,8 +1,6 @@
 # yelp_dataset #
 ---
-[![Build Status](https://travis-ci.org/ansrivas/yelp_dataset.svg?branch=master)](https://travis-ci.org/ansrivas/yelp_dataset)
-
-[![DockerPulls](https://img.shields.io/docker/pulls/ansrivas/yelp_dataset.svg)](https://registry.hub.docker.com/u/ansrivas/yelp_dataset/)
+[![Build Status](https://travis-ci.org/ansrivas/yelp_dataset.svg?branch=master)](https://travis-ci.org/ansrivas/yelp_dataset) [![DockerPulls](https://img.shields.io/docker/pulls/ansrivas/yelp_dataset.svg)](https://registry.hub.docker.com/u/ansrivas/yelp_dataset/)
 
 Welcome to yelp dataset analysis
 
