@@ -31,4 +31,4 @@ run_local:	untar assembly
 run_docker:    ## Run the fat jar after compilation and assembly via docker
 run_docker:	untar
 	docker build -t ansrivas/yelp_dataset:latest . && \
-	docker run -it --rm -v `pwd`/dataset:/root/dataset  ansrivas/yelp_dataset:latest
+	docker run -it --rm -v `pwd`/dataset:/lib/dataset  ansrivas/yelp_dataset:latest
