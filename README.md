@@ -6,7 +6,7 @@ Welcome to yelp dataset analysis
 
 This is a spark application which reads in the yelp dataset published in json format [json_dataset](https://www.yelp.com/dataset/download) and runs some basic sql queries on top of it.
 
-Dependencies:
+Executing the application:
 ---
 
 ### 1. Standalone sbt version:
@@ -53,6 +53,12 @@ run_local:      Run the fat jar after compilation and assembly LOCALLY
 run_docker:     Run the fat jar after compilation and assembly via docker
 ```
 
+TODOs:
+---
+
+-[ ] Create a `docker-compose` file for easy usage.
+-[ ] Implement options to submit jar to an external spark-cluster.
+-[ ] Allow configurations to be read from outside the assembly jar.
 
 ## Contribution policy ##
 
