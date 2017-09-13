@@ -56,9 +56,9 @@ run_docker:     Run the fat jar after compilation and assembly via docker
 TODOs:
 ---
 
--[ ] Create a `docker-compose` file for easy usage.
--[ ] Implement options to submit jar to an external spark-cluster.
--[ ] Allow configurations to be read from outside the assembly jar.
+- [ ] Create a `docker-compose` file for easy usage.
+- [ ] Implement options to submit jar to an external spark-cluster.
+- [ ] Allow configurations to be read from outside the assembly jar.
 
 ## Contribution policy ##
 
