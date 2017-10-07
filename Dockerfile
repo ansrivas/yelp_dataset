@@ -1,4 +1,4 @@
-from ansrivas/scala-sbt:2_11_11-1_0_1
+FROM ansrivas/scala-sbt:2_11_11-1_0_1
 
 # Copy all the code in here
 COPY . /lib
